@@ -1,17 +1,12 @@
 <template>
   <v-app>
-    <v-main>
-
-    </v-main>
+    <Layout/>
   </v-app>
 </template>
 
 <script setup>
-import HelloWorld from '@/components/HelloWorld.vue'
-import { ref } from 'vue';
+import Layout from './components/Layout.vue';
 import { usePokemons } from './store/pokemonsStore.js';
-
 const pokemonsStore = usePokemons();
 pokemonsStore.fetchPokemons()
-const pokemonsList = ref(pokemonsStore.pokemons)
 </script>

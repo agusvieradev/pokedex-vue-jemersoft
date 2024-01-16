@@ -1,10 +1,13 @@
 <template>
     <v-layout>
-        
-        <SideBar />
+        <Drawer />
+        <v-main>
+            <CardContainer/>
+        </v-main>
     </v-layout>
 </template>
 
 <script setup>
-import SideBar from './SideBar.vue';
+import Drawer from './Drawer.vue';
+import CardContainer from './CardContainer.vue';
 </script>
