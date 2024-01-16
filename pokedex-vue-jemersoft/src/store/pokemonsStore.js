@@ -1,9 +1,8 @@
-import { useFetch } from "@/composables/useFetch.js";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 export const usePokemons = defineStore("pokemons", () => {
-  const pokemons = ref(null);
+  const pokemons = ref([]);
   const pokemonsLoading = ref(true);
   const pokemonsErrorFetched = ref(false);
   const pokemonsLength = computed(() => pokemons.value.length);
@@ -27,24 +26,36 @@ export const usePokemons = defineStore("pokemons", () => {
   ];
   const pokemonsLimit = ref(100);
   const pokemonsOffset = ref(0);
-  const url = ref(
-    `https://pokeapi.co/api/v2/pokemon/?offset=${pokemonsOffset.value}&limit=${pokemonsLimit.value}`
-  );
-  console.log(url.value);
-  const fetchPokemons = () => {
-    const { result: pokemonResult, error: pokemonError } = useFetch(url.value);
-    try {
-      if (pokemonResult != null) {
-        pokemonsErrorFetched.value = false;
-        pokemonsLoading.value = true;
-        console.log(pokemonResult);
-        pokemons.value = pokemonResult;
-      }
-    } catch (e) {
-      if (pokemonError != null) {
+
+  const setPokemonsState = async (pokemonList) => {
+    for (let i = 0; i < pokemonList.length; i++) {
+      const fetchPokemonData = await fetch(pokemonList[i].url);
+      if (fetchPokemonData.ok) {
+        const pokemon = await fetchPokemonData.json();
+        pokemons.value.push(pokemon);
+      } else {
         pokemonsErrorFetched.value = true;
-        console.log(e);
+        pokemonsLoading.value = false;
       }
+    }
+  };
+
+  const fetchPokemonAPI = async () => {
+    const url = ref(
+      `${import.meta.env.VITE_POKEMON_API_URL}pokemon/?offset=${
+        pokemonsOffset.value
+      }&limit=${pokemonsLimit.value}`
+    );
+    const response = await fetch(url.value);
+
+    if (response.ok) {
+      const data = await response.json();
+      const result = await data.results;
+      await setPokemonsState(result);
+      pokemonsLoading.value = false;
+    } else {
+      pokemonsErrorFetched.value = true;
+      pokemonsLoading.value = false;
     }
   };
 
@@ -56,6 +67,6 @@ export const usePokemons = defineStore("pokemons", () => {
     pokemonsOffset,
     pokemonsLimit,
     pokemonsOptionsFilter,
-    fetchPokemons,
+    fetchPokemonAPI,
   };
 });

@@ -1,10 +1,12 @@
 <template>
-    <div> {{pokemons}} </div>
+    <div v-if="pokemons">
+
+    </div>
 </template>
 
 <script setup>
 import { usePokemons } from '@/store/pokemonsStore.js';
 import { ref } from 'vue';
-const { pokemons } = usePokemons()
-const pokemonList = ref()
+const { pokemons } = usePokemons();
+const pokemonList = ref(pokemons);
 </script>
