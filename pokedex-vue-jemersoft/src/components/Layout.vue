@@ -1,13 +1,13 @@
 <template>
     <v-layout>
-        <Drawer />
+        <AppBar />
         <v-main>
-            <CardContainer/>
+            <CardContainer />
         </v-main>
     </v-layout>
 </template>
 
 <script setup>
-import Drawer from './Drawer.vue';
+import AppBar from './Drawer.vue';
 import CardContainer from './CardContainer.vue';
 </script>

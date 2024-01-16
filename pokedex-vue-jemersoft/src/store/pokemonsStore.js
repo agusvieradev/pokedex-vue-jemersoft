@@ -3,6 +3,8 @@ import { computed, ref } from "vue";
 
 export const usePokemons = defineStore("pokemons", () => {
   const pokemons = ref([]);
+  const pokemonDetail = ref({});
+  const showPokemonDialog = ref(false);
   const pokemonsLoading = ref(true);
   const pokemonsErrorFetched = ref(false);
   const pokemonsLength = computed(() => pokemons.value.length);
@@ -31,7 +33,15 @@ export const usePokemons = defineStore("pokemons", () => {
     for (let i = 0; i < pokemonList.length; i++) {
       const fetchPokemonData = await fetch(pokemonList[i].url);
       if (fetchPokemonData.ok) {
-        const pokemon = await fetchPokemonData.json();
+        const pokemonData = await fetchPokemonData.json();
+        const pokemonDescription = await fetch(pokemonData.species.url);
+        const pokemon = {
+          name: pokemonData.name,
+          weight: pokemonData.weight + " kg",
+          types: pokemonData.types,
+          img: pokemonData.sprites.front_default,
+          descriptionData: pokemonDescription.json(),
+        };
         pokemons.value.push(pokemon);
       } else {
         pokemonsErrorFetched.value = true;
@@ -58,7 +68,14 @@ export const usePokemons = defineStore("pokemons", () => {
       pokemonsLoading.value = false;
     }
   };
-
+  const openPokemonDialog = (pokemon) => {
+    pokemonDetail.value = pokemon;
+    showPokemonDialog.value = true;
+  };
+  const closePokemonDialog = () => {
+    showPokemonDialog.value = false;
+    pokemonDetail.value = {};
+  };
   return {
     pokemons,
     pokemonsLoading,
@@ -68,5 +85,9 @@ export const usePokemons = defineStore("pokemons", () => {
     pokemonsLimit,
     pokemonsOptionsFilter,
     fetchPokemonAPI,
+    pokemonDetail,
+    showPokemonDialog,
+    openPokemonDialog,
+    closePokemonDialog,
   };
 });
