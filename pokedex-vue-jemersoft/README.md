@@ -1,4 +1,4 @@
-# default
+# Pokedex Vue Project
 
 ## Project setup
 
@@ -48,6 +48,4 @@ pnpm build
 bun run build
 ```
 
-### Customize configuration
 
-See [Configuration Reference](https://vitejs.dev/config/).
