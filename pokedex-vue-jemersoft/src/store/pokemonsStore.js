@@ -1,31 +1,10 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 export const usePokemons = defineStore("pokemons", () => {
   const pokemons = ref([]);
-  const pokemonDetail = ref({});
-  const showPokemonDialog = ref(false);
   const pokemonsLoading = ref(true);
   const pokemonsErrorFetched = ref(false);
-  const pokemonsLength = computed(() => pokemons.value.length);
-  const pokemonsOptionsFilter = [
-    {
-      limit: "100",
-      title: "Hasta 100",
-    },
-    {
-      limit: "250",
-      title: "Hasta 250",
-    },
-    {
-      limit: "500",
-      title: "Hasta 500",
-    },
-    {
-      limit: "10000",
-      title: "Ver todos",
-    },
-  ];
   const pokemonsLimit = ref(100);
   const pokemonsOffset = ref(0);
 
@@ -37,10 +16,12 @@ export const usePokemons = defineStore("pokemons", () => {
         const pokemonDescription = await fetch(pokemonData.species.url);
         const pokemon = {
           name: pokemonData.name,
+          id: pokemonData.id,
           weight: pokemonData.weight + " kg",
           types: pokemonData.types,
           img: pokemonData.sprites.front_default,
-          descriptionData: pokemonDescription.json(),
+          moves: pokemonData.moves,
+          descriptionData: await pokemonDescription.json(),
         };
         pokemons.value.push(pokemon);
       } else {
@@ -48,6 +29,7 @@ export const usePokemons = defineStore("pokemons", () => {
         pokemonsLoading.value = false;
       }
     }
+    pokemonsLoading.value = false;
   };
 
   const fetchPokemonAPI = async () => {
@@ -62,32 +44,18 @@ export const usePokemons = defineStore("pokemons", () => {
       const data = await response.json();
       const result = await data.results;
       await setPokemonsState(result);
-      pokemonsLoading.value = false;
     } else {
       pokemonsErrorFetched.value = true;
       pokemonsLoading.value = false;
     }
   };
-  const openPokemonDialog = (pokemon) => {
-    pokemonDetail.value = pokemon;
-    showPokemonDialog.value = true;
-  };
-  const closePokemonDialog = () => {
-    showPokemonDialog.value = false;
-    pokemonDetail.value = {};
-  };
+
   return {
     pokemons,
     pokemonsLoading,
     pokemonsErrorFetched,
-    pokemonsLength,
     pokemonsOffset,
     pokemonsLimit,
-    pokemonsOptionsFilter,
     fetchPokemonAPI,
-    pokemonDetail,
-    showPokemonDialog,
-    openPokemonDialog,
-    closePokemonDialog,
   };
 });
