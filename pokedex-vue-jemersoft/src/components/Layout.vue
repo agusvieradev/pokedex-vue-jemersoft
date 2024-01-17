@@ -8,6 +8,6 @@
 </template>
 
 <script setup>
-import AppBar from './Drawer.vue';
+import AppBar from './AppBar.vue';
 import CardContainer from './CardContainer.vue';
 </script>
